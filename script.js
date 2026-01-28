@@ -115,7 +115,7 @@ const ROBOT_DATALARI = {
     }
 };
 
-// 2. ELEMENTLERİ SEÇELİM (ID'ler senin HTML ile birebir aynı)
+// 2. ELEMENTLERİ HTML'E GÖRE SEÇELİM
 const sinavSecim = document.getElementById('sinav-secim');
 const dersSecim = document.getElementById('ders-secim');
 const dersEtiketi = document.getElementById('ders-etiketi');
@@ -123,20 +123,23 @@ const seviyeSecim = document.getElementById('seviye-secim');
 const seviyeEtiketi = document.getElementById('seviye-etiketi');
 const kaynakListesi = document.getElementById('kaynak-listesi');
 
-// 3. SINAV SEÇİLDİĞİNDE DERSLERİ DOLDUR
+// 3. SINAV SEÇİLDİĞİNDE DERSLERİ GETİR
 sinavSecim.addEventListener('change', function() {
     const secilenSinav = this.value;
     
-    // Alt menüleri temizle ve gizle
+    // Temizlik
     dersSecim.innerHTML = '<option value="">-- Ders Seçiniz --</option>';
     seviyeSecim.innerHTML = '<option value="">-- Seviye Seçiniz --</option>';
     kaynakListesi.innerHTML = '';
     
+    // Gizleme
+    dersSecim.style.display = 'none';
+    dersEtiketi.style.display = 'none';
     seviyeSecim.style.display = 'none';
-    if(seviyeEtiketi) seviyeEtiketi.style.display = 'none';
+    seviyeEtiketi.style.display = 'none';
 
     if (secilenSinav && ROBOT_DATALARI[secilenSinav]) {
-        // Dersleri doldur
+        // Dersleri Doldur
         const dersler = Object.keys(ROBOT_DATALARI[secilenSinav]);
         dersler.forEach(ders => {
             const opt = document.createElement('option');
@@ -145,21 +148,17 @@ sinavSecim.addEventListener('change', function() {
             dersSecim.appendChild(opt);
         });
         
-        // Ders kutusunu göster
+        // GÖRÜNÜR YAP
         dersSecim.style.display = 'block';
-        if(dersEtiketi) dersEtiketi.style.display = 'block';
-    } else {
-        dersSecim.style.display = 'none';
-        if(dersEtiketi) dersEtiketi.style.display = 'none';
+        dersEtiketi.style.display = 'block';
     }
 });
 
-// 4. DERS SEÇİLDİĞİNDE SEVİYELERİ DOLDUR
+// 4. DERS SEÇİLDİĞİNDE SEVİYELERİ GETİR
 dersSecim.addEventListener('change', function() {
     const sinav = sinavSecim.value;
     const ders = this.value;
     
-    // Seviye menüsünü temizle
     seviyeSecim.innerHTML = '<option value="">-- Seviye Seçiniz --</option>';
     kaynakListesi.innerHTML = '';
 
@@ -172,12 +171,12 @@ dersSecim.addEventListener('change', function() {
             seviyeSecim.appendChild(opt);
         });
         
-        // Seviye kutusunu göster
+        // GÖRÜNÜR YAP
         seviyeSecim.style.display = 'block';
-        if(seviyeEtiketi) seviyeEtiketi.style.display = 'block';
+        seviyeEtiketi.style.display = 'block';
     } else {
         seviyeSecim.style.display = 'none';
-        if(seviyeEtiketi) seviyeEtiketi.style.display = 'none';
+        seviyeEtiketi.style.display = 'none';
     }
 });
 
