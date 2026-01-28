@@ -62,4 +62,107 @@ const ROBOT_DATALARI = {
             "İLERİ DÜZEY": ["3D yayınları", "Acil yayınları", "Orijinal yayınları", "Kaf 3-4", "Apotemi Fasikülleri"]
         },
         "AYT EDEBİYAT": {
-            "TEMEL DÜZEY": ["
+            "TEMEL DÜZEY": ["Okyanus yay.", "3 4 5 yayınları", "Sınav yayınları", "Kafa dengi yayınları"],
+            "ORTA DÜZEY": ["Yayın Denizi", "Palme", "Editör Konsensus", "Karekök yayınları", "hız ve renk"],
+            "İLERİ DÜZEY": ["Limit yayınları", "Bilgi sarmal", "Arı yayınları", "3D yayınları"]
+        }
+    },
+    "LGS": {
+        "TÜRKÇE": {
+            "TEMEL DÜZEY": ["Zeka Küpü", "Limit Yayınları", "Simya", "Koray Varol", "İşleyen Zeka"],
+            "ORTA DÜZEY": ["Ben Korkmam", "Tonguç", "Bilfen", "Nartest Mavi", "Bilfen Protest", "Paragraf Nartest Mavi", "Paragrafın Ritmi Arı", "Paragraf Karekök", "Paraf IQ", "Zoom*", "Çanta Yayınları", "Güçlendiren Türkçe Ankara Y."],
+            "İLERİ DÜZEY": ["Sinan Kuzucu*", "Okyanus Master Paragraf", "Hız*", "Fenomen", "Bilfen ProBil", "Nartest Kırmızı", "Paragraf Fenomen"]
+        },
+        "MATEMATİK": {
+            "TEMEL DÜZEY": ["Matematix", "Fenomen Matematik Fasikülleri*", "Arı Matematik", "Nartest İlk Adım", "Antrenmanlarla Matematik", "Yanıt Yayınları", "Mozaik", "Bumerang Matematik"],
+            "ORTA DÜZEY": ["Okyanus Check Et", "Paraf IQ", "Strateji Bam Bam", "Zoom*", "Prova Akademi Sorular Konuşuyor", "Tudem Kod-32", "Hız Yayınları*", "Güçlendiren Matematik Ankara Yayıncılık", "Tonguç", "Çanta Yayınları", "Fenomen A", "Paraf"],
+            "İLERİ DÜZEY": ["Tudem", "Newton All Star", "Bilfen-ProBil", "Muba Mutlak Başarı", "Okyanus Master", "Fenomen B", "Sinan Kuzucu", "Kafadengi Challenger", "Fenomen Geometri Tabanlı"]
+        },
+        "FEN BİLİMLERİ": {
+            "TEMEL DÜZEY": ["Süper A Akademi Nitelik Y.", "Bilfen Yayınları"],
+            "ORTA DÜZEY": ["Paraf IQ", "Okyanus Check Et", "Mozaik", "Zoom", "Nitelik B", "Tudem Kod-32", "Hız Yayınları*", "Palme Plus", "Kafadengi Fen Bilimleri Kafası", "Nartest Mavi", "Fenomen", "Güçlendiren Fen Bilimleri Ankara Y."],
+            "İLERİ DÜZEY": ["Newton Allstar", "Okyanus Master-Update", "Çanta Yayınları", "Kafadengi Challenger"]
+        },
+        "T.C. İNKILAP TARİHİ": {
+            "TEMEL DÜZEY": ["Tonguç Akademi", "Puan Yayınları", "Okyanus Classmate", "Nartest Yeşil", "Av Akıllı Versiyon Yayınları"],
+            "ORTA DÜZEY": ["Ulti", "Palme", "Limit Yayınları", "İnkılap Kafası Kafadengi", "Nartest Mavi", "Hız Yayınları", "Fenomen", "Güçlendiren İnkılap Ankara Y.", "Zoom", "Paraf"],
+            "İLERİ DÜZEY": ["Sinan Kuzucu"]
+        },
+        "İNGİLİZCE": {
+            "TEMEL DÜZEY": ["Tonguç Dinamo"],
+            "ORTA DÜZEY": ["İngilizce Kafası Kafadengi", "Palme Plus", "More and More", "Ahead With English", "Joyfull", "Shall We", "Hız Yayınları", "Fenomen", "Güçlendiren İngilizce Ankara Y.", "Zoom", "Paraf"],
+            "İLERİ DÜZEY": ["YDS Publishing", "Team Elt", "Masterclass", "Yanıt Yayınları"]
+        }
+    }
+};
+
+const sinavSelect = document.getElementById('sinav-secim');
+const dersSelect = document.getElementById('ders-secim');
+const dersEtiketi = document.getElementById('ders-etiketi');
+const seviyeSelect = document.getElementById('seviye-secim');
+const seviyeEtiketi = document.getElementById('seviye-etiketi');
+const kaynakListesi = document.getElementById('kaynak-listesi');
+
+// 1. Sınav Seçildiğinde
+sinavSelect.addEventListener('change', (e) => {
+    const sinav = e.target.value;
+    dersSelect.innerHTML = '<option value="">-- Ders Seçiniz --</option>';
+    seviyeSelect.style.display = 'none';
+    seviyeEtiketi.style.display = 'none';
+    kaynakListesi.innerHTML = '';
+
+    if (sinav && ROBOT_DATALARI[sinav]) {
+        Object.keys(ROBOT_DATALARI[sinav]).forEach(ders => {
+            const opt = document.createElement('option');
+            opt.value = ders;
+            opt.textContent = ders;
+            dersSelect.appendChild(opt);
+        });
+        dersSelect.style.display = 'block';
+        dersEtiketi.style.display = 'block';
+    }
+});
+
+// 2. Ders Seçildiğinde
+dersSelect.addEventListener('change', (e) => {
+    const sinav = sinavSelect.value;
+    const ders = e.target.value;
+    seviyeSelect.innerHTML = '<option value="">-- Seviye Seçiniz --</option>';
+    kaynakListesi.innerHTML = '';
+
+    if (ders && ROBOT_DATALARI[sinav][ders]) {
+        Object.keys(ROBOT_DATALARI[sinav][ders]).forEach(seviye => {
+            const opt = document.createElement('option');
+            opt.value = seviye;
+            opt.textContent = seviye;
+            seviyeSelect.appendChild(opt);
+        });
+        seviyeSelect.style.display = 'block';
+        seviyeEtiketi.style.display = 'block';
+    }
+});
+
+// 3. Seviye Seçildiğinde
+seviyeSelect.addEventListener('change', (e) => {
+    const sinav = sinavSelect.value;
+    const ders = dersSelect.value;
+    const seviye = e.target.value;
+    kaynakListesi.innerHTML = '';
+
+    if (seviye && ROBOT_DATALARI[sinav][ders][seviye]) {
+        const kaynaklar = ROBOT_DATALARI[sinav][ders][seviye];
+        let className = '';
+        let emoji = '';
+
+        if (seviye === "TEMEL DÜZEY") { className = "kolay-kaynak"; emoji = "🟢"; }
+        else if (seviye === "ORTA DÜZEY") { className = "orta-kaynak"; emoji = "🔵"; }
+        else if (seviye === "İLERİ DÜZEY") { className = "zor-kaynak"; emoji = "🔴"; }
+
+        kaynaklar.forEach(kaynak => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span class="list-emoji">${emoji}</span> ${kaynak}`;
+            li.className = className;
+            kaynakListesi.appendChild(li);
+        });
+    }
+});
