@@ -96,6 +96,7 @@ const ROBOT_DATALARI = {
     }
 };
 
+// Seçim kutularını ve etiketleri tanımlayalım
 const sinavSelect = document.getElementById('sinav-secim');
 const dersSelect = document.getElementById('ders-secim');
 const dersEtiketi = document.getElementById('ders-etiketi');
@@ -103,66 +104,50 @@ const seviyeSelect = document.getElementById('seviye-secim');
 const seviyeEtiketi = document.getElementById('seviye-etiketi');
 const kaynakListesi = document.getElementById('kaynak-listesi');
 
-// 1. Sınav Seçildiğinde
+// 1. SINAV SEÇİLDİĞİNDE
 sinavSelect.addEventListener('change', (e) => {
     const sinav = e.target.value;
     dersSelect.innerHTML = '<option value="">-- Ders Seçiniz --</option>';
+    
+    // Her yeni sınav seçiminde alt kutuları gizle ve temizle
     seviyeSelect.style.display = 'none';
-    seviyeEtiketi.style.display = 'none';
+    if(seviyeEtiketi) seviyeEtiketi.style.display = 'none';
     kaynakListesi.innerHTML = '';
 
-    if (sinav && ROBOT_DATALARI[sinav]) {
-        Object.keys(ROBOT_DATALARI[sinav]).forEach(ders => {
+    if (sinav && ROBOT_VERISI[sinav]) {
+        Object.keys(ROBOT_VERISI[sinav]).forEach(ders => {
             const opt = document.createElement('option');
             opt.value = ders;
             opt.textContent = ders;
             dersSelect.appendChild(opt);
         });
         dersSelect.style.display = 'block';
-        dersEtiketi.style.display = 'block';
+        if(dersEtiketi) dersEtiketi.style.display = 'block';
     }
 });
 
-// 2. Ders Seçildiğinde
+// 2. DERS SEÇİLDİĞİNDE (Seviyenin gelmesini sağlayan kritik kısım)
 dersSelect.addEventListener('change', (e) => {
     const sinav = sinavSelect.value;
     const ders = e.target.value;
+    
+    // Seviye kutusunu sıfırla
     seviyeSelect.innerHTML = '<option value="">-- Seviye Seçiniz --</option>';
     kaynakListesi.innerHTML = '';
 
-    if (ders && ROBOT_DATALARI[sinav][ders]) {
-        Object.keys(ROBOT_DATALARI[sinav][ders]).forEach(seviye => {
+    if (ders && ROBOT_VERISI[sinav] && ROBOT_VERISI[sinav][ders]) {
+        Object.keys(ROBOT_VERISI[sinav][ders]).forEach(seviye => {
             const opt = document.createElement('option');
             opt.value = seviye;
             opt.textContent = seviye;
             seviyeSelect.appendChild(opt);
         });
+        
+        // SEVİYEYİ GÖRÜNÜR YAP
         seviyeSelect.style.display = 'block';
-        seviyeEtiketi.style.display = 'block';
-    }
-});
-
-// 3. Seviye Seçildiğinde
-seviyeSelect.addEventListener('change', (e) => {
-    const sinav = sinavSelect.value;
-    const ders = dersSelect.value;
-    const seviye = e.target.value;
-    kaynakListesi.innerHTML = '';
-
-    if (seviye && ROBOT_DATALARI[sinav][ders][seviye]) {
-        const kaynaklar = ROBOT_DATALARI[sinav][ders][seviye];
-        let className = '';
-        let emoji = '';
-
-        if (seviye === "TEMEL DÜZEY") { className = "kolay-kaynak"; emoji = "🟢"; }
-        else if (seviye === "ORTA DÜZEY") { className = "orta-kaynak"; emoji = "🔵"; }
-        else if (seviye === "İLERİ DÜZEY") { className = "zor-kaynak"; emoji = "🔴"; }
-
-        kaynaklar.forEach(kaynak => {
-            const li = document.createElement('li');
-            li.innerHTML = `<span class="list-emoji">${emoji}</span> ${kaynak}`;
-            li.className = className;
-            kaynakListesi.appendChild(li);
-        });
+        if(seviyeEtiketi) seviyeEtiketi.style.display = 'block';
+    } else {
+        seviyeSelect.style.display = 'none';
+        if(seviyeEtiketi) seviyeEtiketi.style.display = 'none';
     }
 });
