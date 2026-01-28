@@ -42,80 +42,25 @@ select {
     text-align: center; margin-top: 40px; padding: 20px;
     font-size: 14px; color: #6c757d; border-top: 1px solid #dee2e6;
 }
-/* Instagram Sabit Buton */
-.insta-float {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #E1306C;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    font-family: sans-serif;
-    font-weight: bold;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    z-index: 1000;
-    transition: transform 0.3s ease;
-}
-
-.insta-float img {
-    width: 25px;
-    height: 25px;
-    margin-right: 10px;
-}
-
-.insta-float:hover {
-    transform: scale(1.1);
-    background-color: #C13584;
-}
-
-/* Mobilde sadece ikon görünsün istersen (isteğe bağlı) */
-@media screen and (max-width: 600px) {
-    .insta-float span {
-        display: none;
-    }
-    .insta-float {
-        padding: 10px;
-        border-radius: 50%;
-    }
-    .insta-float img {
-        margin-right: 0;
-    }
-}
-
-
-/* Instagram Sabit Buton */
-.insta-float {
-    position: fixed !important;
-    bottom: 20px !important;
-    right: 20px !important;
-    background-color: #E1306C !important;
-    color: white !important;
-    padding: 10px 20px !important;
-    border-radius: 50px !important;
+/* Alt Kısımdaki Instagram Butonu Ayarları */
+.insta-alt-bolum {
     display: flex !important;
+    justify-content: center !important;
     align-items: center !important;
     text-decoration: none !important;
-    z-index: 9999 !important;
-    width: auto !important; /* Ekranı kaplamasını engeller */
-    height: auto !important;
+    margin-top: 15px !important;
 }
 
-/* Sadece butonun içindeki logoyu küçültür */
-.insta-float img {
-    width: 30px !important;
-    height: 30px !important;
-    min-width: 30px !important;
-    max-width: 30px !important;
-    margin-right: 10px !important;
+/* Logonun Dev Gibi Olmasını Engelleyen Kısım Burası */
+.insta-alt-bolum img {
+    width: 20px !important; /* Logoyu küçücük yapar */
+    height: 20px !important;
+    margin-right: 8px !important;
     display: inline-block !important;
 }
 
-.insta-float span {
-    color: white !important;
-    font-size: 16px !important;
-    font-family: sans-serif !important;
+.insta-alt-bolum span {
+    color: #E1306C !important; /* Instagram pembesi */
+    font-weight: bold !important;
+    font-size: 14px !important;
 }
