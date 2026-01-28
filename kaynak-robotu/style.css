@@ -85,3 +85,37 @@ select {
         margin-right: 0;
     }
 }
+
+
+/* Instagram Sabit Buton */
+.insta-float {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    background-color: #E1306C !important;
+    color: white !important;
+    padding: 10px 20px !important;
+    border-radius: 50px !important;
+    display: flex !important;
+    align-items: center !important;
+    text-decoration: none !important;
+    z-index: 9999 !important;
+    width: auto !important; /* Ekranı kaplamasını engeller */
+    height: auto !important;
+}
+
+/* Sadece butonun içindeki logoyu küçültür */
+.insta-float img {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
+    margin-right: 10px !important;
+    display: inline-block !important;
+}
+
+.insta-float span {
+    color: white !important;
+    font-size: 16px !important;
+    font-family: sans-serif !important;
+}
