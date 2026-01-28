@@ -1,5 +1,4 @@
-// --- TÜM BİRLEŞTİRİLMİŞ KAYNAK VERİSİ ---
-const ROBOT_DATALARI = {
+document.addEventListener('DOMContentLoaded', function() {
     "YKS": {
         "TYT TÜRKÇE - ANLAM BİLGİSİ": {
             "TEMEL DÜZEY": ["Birey A Serisi", "Önder Hoca KR Akademi (Video Destekli)", "Hız ve Renk", "Hız Yayınları"],
@@ -115,93 +114,18 @@ const ROBOT_DATALARI = {
     }
 };
 
-// 2. ELEMENTLERİ HTML'E GÖRE SEÇELİM
-const sinavSecim = document.getElementById('sinav-secim');
-const dersSecim = document.getElementById('ders-secim');
-const dersEtiketi = document.getElementById('ders-etiketi');
-const seviyeSecim = document.getElementById('seviye-secim');
-const seviyeEtiketi = document.getElementById('seviye-etiketi');
-const kaynakListesi = document.getElementById('kaynak-listesi');
+};
 
-// 3. SINAV SEÇİLDİĞİNDE DERSLERİ GETİR
-sinavSecim.addEventListener('change', function() {
-    const secilenSinav = this.value;
-    
-    // Temizlik
-    dersSecim.innerHTML = '<option value="">-- Ders Seçiniz --</option>';
-    seviyeSecim.innerHTML = '<option value="">-- Seviye Seçiniz --</option>';
-    kaynakListesi.innerHTML = '';
-    
-    // Gizleme
-    dersSecim.style.display = 'none';
-    dersEtiketi.style.display = 'none';
-    seviyeSecim.style.display = 'none';
-    seviyeEtiketi.style.display = 'none';
+    const sinavSecim = document.getElementById('sinav-secim');
+    const dersSecim = document.getElementById('ders-secim');
+    // ... diğer elementler
 
-    if (secilenSinav && ROBOT_DATALARI[secilenSinav]) {
-        // Dersleri Doldur
-        const dersler = Object.keys(ROBOT_DATALARI[secilenSinav]);
-        dersler.forEach(ders => {
-            const opt = document.createElement('option');
-            opt.value = ders;
-            opt.textContent = ders;
-            dersSecim.appendChild(opt);
-        });
-        
-        // GÖRÜNÜR YAP
-        dersSecim.style.display = 'block';
-        dersEtiketi.style.display = 'block';
-    }
-});
-
-// 4. DERS SEÇİLDİĞİNDE SEVİYELERİ GETİR
-dersSecim.addEventListener('change', function() {
-    const sinav = sinavSecim.value;
-    const ders = this.value;
-    
-    seviyeSecim.innerHTML = '<option value="">-- Seviye Seçiniz --</option>';
-    kaynakListesi.innerHTML = '';
-
-    if (sinav && ders && ROBOT_DATALARI[sinav][ders]) {
-        const seviyeler = Object.keys(ROBOT_DATALARI[sinav][ders]);
-        seviyeler.forEach(seviye => {
-            const opt = document.createElement('option');
-            opt.value = seviye;
-            opt.textContent = seviye;
-            seviyeSecim.appendChild(opt);
-        });
-        
-        // GÖRÜNÜR YAP
-        seviyeSecim.style.display = 'block';
-        seviyeEtiketi.style.display = 'block';
-    } else {
-        seviyeSecim.style.display = 'none';
-        seviyeEtiketi.style.display = 'none';
-    }
-});
-
-// 5. SEVİYE SEÇİLDİĞİNDE KAYNAKLARI LİSTELE
-seviyeSecim.addEventListener('change', function() {
-    const sinav = sinavSecim.value;
-    const ders = dersSecim.value;
-    const seviye = this.value;
-    
-    kaynakListesi.innerHTML = '';
-
-    if (sinav && ders && seviye && ROBOT_DATALARI[sinav][ders][seviye]) {
-        const kaynaklar = ROBOT_DATALARI[sinav][ders][seviye];
-        let className = '';
-        let emoji = '';
-
-        if (seviye === "TEMEL DÜZEY") { className = "kolay-kaynak"; emoji = "🟢"; }
-        else if (seviye === "ORTA DÜZEY") { className = "orta-kaynak"; emoji = "🔵"; }
-        else if (seviye === "İLERİ DÜZEY") { className = "zor-kaynak"; emoji = "🔴"; }
-
-        kaynaklar.forEach(kaynak => {
-            const li = document.createElement('li');
-            li.innerHTML = `<span class="list-emoji">${emoji}</span> ${kaynak}`;
-            li.className = className;
-            kaynakListesi.appendChild(li);
+    if (sinavSecim) {
+        sinavSecim.addEventListener('change', function() {
+            console.log("Sınav seçildi: ", this.value); // Hata ayıklama için
+            // Dersleri doldurma mantığın...
         });
     }
+
+    // Diğer tüm listenerlar (dersSecim, seviyeSecim) burada olmalı...
 });
