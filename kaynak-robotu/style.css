@@ -85,3 +85,63 @@ select {
         margin-right: 0;
     }
 }
+
+
+/* Sabit Butonlar Grubu */
+.fixed-action-buttons {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column; /* Mobilde üst üste, masaüstünde yanyana istersen row yapabiliriz */
+    gap: 10px;
+    z-index: 9999;
+}
+
+/* Ana Sayfa Buton Stili */
+.home-btn {
+    background-color: #1e3c72;
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.home-btn:hover {
+    transform: scale(1.05);
+    background-color: #2a5298;
+}
+
+.btn-icon {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+/* Mevcut Insta-float Butonunu Düzenleme (Üst üste binmemesi için) */
+.insta-float {
+    position: static !important; /* Eski sabit konumunu iptal ediyoruz, grup içinde kalsın */
+    background-color: #ffffff;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+/* Masaüstünde butonları yanyana dizmek için */
+@media (min-width: 601px) {
+    .fixed-action-buttons {
+        flex-direction: row;
+    }
+}
