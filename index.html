@@ -194,8 +194,8 @@
 <script>
     function updateCountdown() {
         const now = new Date().getTime();
-        const lgsDate = new Date("June 13, 2026").getTime();
-        const yksDate = new Date("June 20, 2026").getTime();
+        const lgsDate = new Date("June 13, 2027").getTime();
+        const yksDate = new Date("June 19, 2027").getTime();
         const lgsDiff = lgsDate - now;
         const yksDiff = yksDate - now;
         document.getElementById("lgs-days").innerText = Math.max(0, Math.floor(lgsDiff / 86400000)) + " GÜN";
