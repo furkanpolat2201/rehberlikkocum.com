@@ -127,7 +127,7 @@ select {
 .insta-float {
     position: static !important; /* Eski sabit konumunu iptal ediyoruz, grup içinde kalsın */
     background-color: #ffffff;
-    color: black;
+    color: #333;
     padding: 10px 15px;
     border-radius: 50px;
     display: flex;
