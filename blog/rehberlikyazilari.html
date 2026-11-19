@@ -1,108 +1,310 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <link rel="icon" type="image/png" href="logo.png?v=3">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog | Rehberlik Koçum </title>
-    <link rel="stylesheet" href="blog-style.css">
-    <style>
-        /* YAZI OKUMA PENCERESİ (MODAL) TASARIMI */
-        .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); overflow-y: auto; padding: 20px; }
-        .modal-content { background: white; margin: 20px auto; padding: 30px; border-radius: 20px; max-width: 800px; position: relative; line-height: 1.8; }
-        .close-btn { position: sticky; top: 0; float: right; font-size: 30px; cursor: pointer; color: #764ba2; font-weight: bold; }
-        .modal-body img { max-width: 100%; height: auto; border-radius: 10px; } /* Resimler taşmasın */
-        .modal-body h2 { color: #1e3c72; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#14243d">
+  <meta name="description" content="Rehberlik Koçum rehberlik yazıları: sınav süreci, motivasyon, verimli çalışma ve öğrenci gelişimi üzerine psikolojik danışmanlık odaklı içerikler.">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="stylesheet" href="blog-style.css">
+  <title>Rehberlik Yazıları | Rehberlik Koçum</title>
 </head>
 <body>
+  <main class="blog-container">
+    <a href="../index.html" class="back-link">← Ana Sayfaya Dön</a>
 
-    <div class="blog-container">
-        <a href="../index.html" class="back-link">← Ana Sayfaya Dön</a>
-        <header class="blog-header">
-            <h1>REHBERLİK YAZILARI</h1>
-            <p>Sınav sürecine dair makalelerimiz.</p>
-        </header>
+    <header class="blog-header">
+      <div class="eyebrow">REHBERLİK KOÇUM · BLOG</div>
+      <h1>Sınav yolculuğuna eşlik eden yazılar.</h1>
+      <p>Sınav süreci, çalışma alışkanlıkları, motivasyon ve öğrenci gelişimi üzerine rehberlik odaklı içeriklerimizi keşfet.</p>
+    </header>
 
-        <div class="blog-grid" id="blogger-posts">
-            <p style="text-align: center;">Yazılar yükleniyor...</p>
+    <section aria-label="Blog yazıları">
+      <div class="blog-toolbar">
+        <div class="search-wrap">
+          <input id="blog-search" type="search" placeholder="Yazılarda ara..." aria-label="Blog yazılarında ara">
         </div>
-    </div>
+        <div id="post-count" aria-live="polite">Yazılar yükleniyor...</div>
+      </div>
 
-    <div id="postModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closePost()">&times;</span>
-            <div id="modal-data" class="modal-body">
-                </div>
-        </div>
-    </div>
+      <nav id="category-list" class="category-list" aria-label="Yazı kategorileri"></nav>
+      <div class="blog-grid" id="blogger-posts" aria-live="polite">
+        <div class="blog-message">Yazılar yükleniyor...</div>
+      </div>
+    </section>
+  </main>
 
-    <script>
-    let allPosts = []; 
+  <div id="postModal" class="modal" role="dialog" aria-modal="true" aria-label="Blog yazısı" onclick="if(event.target === this) closePost()">
+    <article class="modal-content">
+      <button class="close-btn" type="button" aria-label="Yazıyı kapat" onclick="closePost()">×</button>
+      <div id="modal-data" class="modal-body"></div>
+    </article>
+  </div>
 
-    function showPosts(json) {
-        let container = document.getElementById('blogger-posts');
-        
-        // Veri var mı kontrolü
-        if (!json.feed || !json.feed.entry) {
-            container.innerHTML = '<p style="text-align: center;">Henüz yazı bulunamadı.</p>';
-            return;
+  <script>
+    let allPosts = [];
+    let activeCategory = "Tümü";
+
+    const postContainer = document.getElementById("blogger-posts");
+    const categoryContainer = document.getElementById("category-list");
+    const searchInput = document.getElementById("blog-search");
+    const postCount = document.getElementById("post-count");
+
+    function getPostTitle(entry) {
+      return entry && entry.title && entry.title.$t ? entry.title.$t : "Başlıksız Yazı";
+    }
+
+    function getPostContent(entry) {
+      if (entry && entry.content && entry.content.$t) return entry.content.$t;
+      if (entry && entry.summary && entry.summary.$t) return entry.summary.$t;
+      return "";
+    }
+
+    function stripHtml(html) {
+      const element = document.createElement("div");
+      element.innerHTML = html || "";
+      return (element.textContent || element.innerText || "").replace(/\s+/g, " ").trim();
+    }
+
+    function getPostSummary(entry) {
+      const source = entry && entry.summary && entry.summary.$t
+        ? entry.summary.$t
+        : getPostContent(entry);
+      const summary = stripHtml(source);
+      return summary.length > 165 ? summary.slice(0, 165).trim() + "…" : (summary || "Yazıyı okumak için tıklayın.");
+    }
+
+    function getPostCategories(entry) {
+      return (entry.category || [])
+        .map(item => item.term)
+        .filter(Boolean);
+    }
+
+    function getPostDate(entry) {
+      const rawDate = entry && (entry.published || entry.updated) ? (entry.published || entry.updated).$t : "";
+      if (!rawDate) return "";
+      const date = new Date(rawDate);
+      if (Number.isNaN(date.getTime())) return "";
+      return new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "long", year: "numeric" }).format(date);
+    }
+
+    function getPostImage(entry) {
+      if (entry && entry["media$thumbnail"] && entry["media$thumbnail"].url) {
+        return entry["media$thumbnail"].url.replace(/\/s[0-9]+(-c)?\//, "/s800/");
+      }
+      const content = getPostContent(entry);
+      const match = content.match(/<img[^>]+src=["']([^"']+)["']/i);
+      return match ? match[1] : "";
+    }
+
+    function createCategoryButtons() {
+      const categories = [...new Set(allPosts.flatMap(getPostCategories))].sort((a, b) => a.localeCompare(b, "tr"));
+      categoryContainer.replaceChildren();
+
+      ["Tümü", ...categories].forEach(category => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "category-chip" + (category === activeCategory ? " active" : "");
+        button.textContent = category;
+        button.setAttribute("aria-pressed", category === activeCategory ? "true" : "false");
+        button.addEventListener("click", () => {
+          activeCategory = category;
+          createCategoryButtons();
+          renderPosts();
+        });
+        categoryContainer.appendChild(button);
+      });
+    }
+
+    function createPostCard(entry, index) {
+      const card = document.createElement("article");
+      card.className = "post-card";
+      card.tabIndex = 0;
+      card.setAttribute("role", "button");
+      card.setAttribute("aria-label", getPostTitle(entry) + " yazısını oku");
+
+      const imageUrl = getPostImage(entry);
+      if (imageUrl) {
+        const image = document.createElement("img");
+        image.className = "post-image";
+        image.src = imageUrl;
+        image.alt = getPostTitle(entry);
+        image.loading = "lazy";
+        image.referrerPolicy = "no-referrer";
+        image.onerror = () => {
+          const placeholder = document.createElement("div");
+          placeholder.className = "post-image-placeholder";
+          placeholder.textContent = "✦";
+          image.replaceWith(placeholder);
+        };
+        card.appendChild(image);
+      } else {
+        const placeholder = document.createElement("div");
+        placeholder.className = "post-image-placeholder";
+        placeholder.textContent = "✦";
+        card.appendChild(placeholder);
+      }
+
+      const content = document.createElement("div");
+      content.className = "post-card-content";
+
+      const meta = document.createElement("div");
+      meta.className = "post-meta";
+
+      const categories = getPostCategories(entry);
+      if (categories.length) {
+        const category = document.createElement("span");
+        category.className = "post-category";
+        category.textContent = categories[0];
+        meta.appendChild(category);
+      }
+
+      const date = getPostDate(entry);
+      if (date) {
+        const dateText = document.createElement("span");
+        dateText.textContent = date;
+        meta.appendChild(dateText);
+      }
+
+      const title = document.createElement("h2");
+      title.textContent = getPostTitle(entry);
+
+      const summary = document.createElement("p");
+      summary.textContent = getPostSummary(entry);
+
+      const readMore = document.createElement("span");
+      readMore.className = "read-more";
+      readMore.append("Yazıyı Oku ");
+      const arrow = document.createElement("span");
+      arrow.textContent = "→";
+      readMore.appendChild(arrow);
+
+      content.append(meta, title, summary, readMore);
+      card.appendChild(content);
+
+      const open = () => openPost(index);
+      card.addEventListener("click", open);
+      card.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          open();
         }
+      });
 
-        allPosts = json.feed.entry; 
-        container.innerHTML = ''; 
+      return card;
+    }
 
-        for (let i = 0; i < allPosts.length; i++) {
-            let entry = allPosts[i];
-            
-            // BAŞLIK ALMA (Hata korumalı)
-            let title = "Başlıksız Yazı";
-            if (entry.title && entry.title.$t) {
-                title = entry.title.$t;
-            }
+    function renderPosts() {
+      const query = searchInput.value.trim().toLocaleLowerCase("tr-TR");
+      const filtered = allPosts.filter(entry => {
+        const categories = getPostCategories(entry);
+        const categoryMatch = activeCategory === "Tümü" || categories.includes(activeCategory);
+        const searchable = [
+          getPostTitle(entry),
+          getPostSummary(entry),
+          categories.join(" ")
+        ].join(" ").toLocaleLowerCase("tr-TR");
+        return categoryMatch && searchable.includes(query);
+      });
 
-            // ÖZET ALMA (Hata korumalı)
-            let summaryText = "Okumak için tıklayın...";
-            let rawContent = "";
-            
-            if (entry.summary && entry.summary.$t) {
-                rawContent = entry.summary.$t;
-            } else if (entry.content && entry.content.$t) {
-                rawContent = entry.content.$t;
-            }
+      postContainer.replaceChildren();
+      postCount.textContent = filtered.length + " yazı gösteriliyor";
 
-            if (rawContent) {
-                // HTML etiketlerini temizle ve ilk 100 karakteri al
-                summaryText = rawContent.replace(/<[^>]*>/g, "").substring(0, 100) + "...";
-            }
+      if (!filtered.length) {
+        const message = document.createElement("div");
+        message.className = "blog-message";
+        message.textContent = allPosts.length
+          ? "Aramana uygun bir yazı bulamadık. Farklı bir kelime veya kategori deneyebilirsin."
+          : "Henüz yayımlanmış bir yazı bulunamadı.";
+        postContainer.appendChild(message);
+        return;
+      }
 
-            // Kartı oluştur ve ekrana bas
-            container.innerHTML += `
-                <div class="post-card" onclick="openPost(${i})" style="cursor:pointer;">
-                    <h2>${title}</h2>
-                    <p>${summaryText}</p>
-                    <span class="read-more">Hemen Oku →</span>
-                </div>
-            `;
-        }
+      filtered.forEach(entry => {
+        const originalIndex = allPosts.indexOf(entry);
+        postContainer.appendChild(createPostCard(entry, originalIndex));
+      });
+    }
+
+    function sanitizePostHtml(html) {
+      const parser = new DOMParser();
+      const documentCopy = parser.parseFromString(html || "", "text/html");
+      documentCopy.querySelectorAll("script, style, form, object, embed").forEach(node => node.remove());
+
+      documentCopy.body.querySelectorAll("*").forEach(element => {
+        [...element.attributes].forEach(attribute => {
+          const name = attribute.name.toLowerCase();
+          const value = attribute.value.trim().toLowerCase();
+          if (name.startsWith("on") || ((name === "href" || name === "src") && value.startsWith("javascript:"))) {
+            element.removeAttribute(attribute.name);
+          }
+        });
+      });
+
+      return documentCopy.body.innerHTML;
     }
 
     function openPost(index) {
-        let entry = allPosts[index];
-        let title = entry.title ? entry.title.$t : "Başlık Yüklenemedi";
-        let content = entry.content ? entry.content.$t : (entry.summary ? entry.summary.$t : "İçerik boş.");
-        
-        document.getElementById('modal-data').innerHTML = `<h2>${title}</h2><div>${content}</div>`;
-        document.getElementById('postModal').style.display = "block";
-        document.body.style.overflow = "hidden"; 
+      const entry = allPosts[index];
+      if (!entry) return;
+
+      const modalData = document.getElementById("modal-data");
+      modalData.replaceChildren();
+
+      const heading = document.createElement("h2");
+      heading.textContent = getPostTitle(entry);
+      modalData.appendChild(heading);
+
+      const date = getPostDate(entry);
+      if (date) {
+        const dateElement = document.createElement("p");
+        dateElement.className = "post-meta";
+        dateElement.textContent = date;
+        modalData.appendChild(dateElement);
+      }
+
+      const body = document.createElement("div");
+      body.innerHTML = sanitizePostHtml(getPostContent(entry) || "<p>Bu yazının içeriği henüz eklenmemiş.</p>");
+      modalData.appendChild(body);
+
+      document.getElementById("postModal").classList.add("open");
+      document.body.style.overflow = "hidden";
+      document.querySelector(".close-btn").focus();
     }
 
     function closePost() {
-        document.getElementById('postModal').style.display = "none";
-        document.body.style.overflow = "auto";
+      document.getElementById("postModal").classList.remove("open");
+      document.body.style.overflow = "";
     }
-</script>
 
-    <script src="https://rehberlikkocum.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPosts"></script>
+    function showPosts(json) {
+      if (!json || !json.feed || !json.feed.entry) {
+        allPosts = [];
+        renderPosts();
+        return;
+      }
+
+      allPosts = json.feed.entry;
+      createCategoryButtons();
+      renderPosts();
+    }
+
+    function showFeedError() {
+      postCount.textContent = "Yazılar yüklenemedi";
+      postContainer.innerHTML = '<div class="blog-message">Yazılara şu anda ulaşılamıyor. Lütfen biraz sonra tekrar deneyin.</div>';
+    }
+
+    searchInput.addEventListener("input", renderPosts);
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closePost();
+    });
+
+    window.showPosts = showPosts;
+    window.closePost = closePost;
+    window.openPost = openPost;
+  </script>
+
+  <script src="https://rehberlikkocum.blogspot.com/feeds/posts/default?max-results=100&amp;alt=json-in-script&amp;callback=showPosts" onerror="showFeedError()"></script>
 </body>
 </html>
