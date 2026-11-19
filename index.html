@@ -112,6 +112,27 @@
             .portal-grid { grid-template-columns: 1fr; }
             .timer-box span { font-size: 20px; }
         }
+    
+        /* BLOG ÖN İZLEME */
+        .home-blog { width: min(1100px, calc(100% - 40px)); margin: 20px auto 55px; }
+        .home-blog-head { display:flex; justify-content:space-between; align-items:end; gap:20px; margin-bottom:20px; }
+        .home-blog-kicker { color:#c77b2b; font-size:12px; font-weight:800; letter-spacing:1.5px; margin:0 0 8px; }
+        .home-blog-head h2 { color:#14243d; font-size:clamp(23px,3vw,30px); margin:0; }
+        .home-blog-head p { color:#64748b; margin:8px 0 0; }
+        .home-blog-link { color:#14243d; font-weight:800; text-decoration:none; white-space:nowrap; }
+        .home-blog-link:hover { color:#c77b2b; }
+        .home-blog-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+        .home-blog-card { min-width:0; background:#fff; border:1px solid #e8ebef; border-radius:16px; padding:21px; box-shadow:0 4px 15px rgba(20,36,61,.045); }
+        .home-blog-card small { display:block; color:#a75d16; font-weight:800; margin-bottom:10px; }
+        .home-blog-card h3 { color:#14243d; font-size:17px; line-height:1.4; margin:0 0 10px; }
+        .home-blog-card p { color:#64748b; font-size:14px; line-height:1.6; margin:0; }
+        .home-blog-loading { grid-column:1/-1; padding:24px; text-align:center; color:#64748b; background:#fff; border-radius:14px; }
+        @media(max-width:700px) {
+          .home-blog-head { align-items:flex-start; flex-direction:column; }
+          .home-blog-grid { grid-template-columns:1fr; }
+          .home-blog { width:calc(100% - 32px); }
+        }
+
     </style>
 </head>
 <body>
@@ -198,6 +219,21 @@
     </div>
 </div>
 
+
+<section class="home-blog" aria-labelledby="home-blog-title">
+  <div class="home-blog-head">
+    <div>
+      <p class="home-blog-kicker">REHBERLİK KOÇUM BLOG</p>
+      <h2 id="home-blog-title">Rehberlik yazılarımız</h2>
+      <p>Sınav sürecine ve öğrenci gelişimine dair güncel içerikler.</p>
+    </div>
+    <a class="home-blog-link" href="blog/rehberlikyazilari.html">Tüm yazıları gör →</a>
+  </div>
+  <div class="home-blog-grid" id="home-blog-posts">
+    <div class="home-blog-loading">Son yazılar yükleniyor...</div>
+  </div>
+</section>
+
 <footer>© 2026 rehberlikkocum.com | Psikolojik Danışman Ayşenur Savrun & Furkan Polat</footer>
 
 <script>
@@ -212,5 +248,41 @@
     }
     updateCountdown();
 </script>
+
+<script>
+(function () {
+  function renderHomeBlog(data) {
+    const target = document.getElementById("home-blog-posts");
+    if (!target) return;
+    const entries = data && data.feed && data.feed.entry ? data.feed.entry.slice(0, 3) : [];
+    target.replaceChildren();
+    if (!entries.length) {
+      target.innerHTML = '<div class="home-blog-loading">Blog yazılarımıza göz atmak için <a href="blog/rehberlikyazilari.html">tüm yazılar sayfasını</a> ziyaret edebilirsin.</div>';
+      return;
+    }
+    entries.forEach(entry => {
+      const card = document.createElement("article");
+      card.className = "home-blog-card";
+      const category = entry.category && entry.category[0] && entry.category[0].term ? entry.category[0].term : "Rehberlik";
+      const title = entry.title && entry.title.$t ? entry.title.$t : "Rehberlik yazısı";
+      const raw = entry.summary && entry.summary.$t ? entry.summary.$t : (entry.content && entry.content.$t ? entry.content.$t : "");
+      const textNode = document.createElement("div");
+      textNode.innerHTML = raw;
+      const summary = (textNode.textContent || "").replace(/\\s+/g, " ").trim();
+      const label = document.createElement("small");
+      label.textContent = category;
+      const heading = document.createElement("h3");
+      heading.textContent = title;
+      const paragraph = document.createElement("p");
+      paragraph.textContent = summary.length > 125 ? summary.slice(0, 125).trim() + "…" : (summary || "Yazıyı okumak için tüm blog yazılarımıza göz at.");
+      card.append(label, heading, paragraph);
+      target.appendChild(card);
+    });
+  }
+  window.renderHomeBlog = renderHomeBlog;
+})();
+</script>
+<script src="https://rehberlikkocum.blogspot.com/feeds/posts/default?max-results=3&amp;alt=json-in-script&amp;callback=renderHomeBlog"></script>
+
 </body>
 </html>
