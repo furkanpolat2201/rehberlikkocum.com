@@ -268,7 +268,7 @@
       const raw = entry.summary && entry.summary.$t ? entry.summary.$t : (entry.content && entry.content.$t ? entry.content.$t : "");
       const textNode = document.createElement("div");
       textNode.innerHTML = raw;
-      const summary = (textNode.textContent || "").replace(/\\s+/g, " ").trim();
+      const summary = (textNode.textContent || "").replace(/\s+/g, " ").trim();
       const label = document.createElement("small");
       label.textContent = category;
       const heading = document.createElement("h3");
